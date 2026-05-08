@@ -6,50 +6,76 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
-
+        web: __DIR__ . '/../routes/web.php',
+        api: [
+            __DIR__ . '/../routes/asset.php',      // Asset Module routes
+            __DIR__ . '/../routes/auth.php',       // Teammate routes
+            __DIR__ . '/../routes/file.php',
+            __DIR__ . '/../routes/service.php',
+        ],
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Register middleware aliases from teammate's structure
+        $middleware->alias([
+            'check.user.exists'        => \App\Http\Middleware\Auth\CheckUserExistMiddleware::class,
+            'check.active'             => \App\Http\Middleware\Auth\CheckActiveMiddleware::class,
+            'check.credentials'        => \App\Http\Middleware\Auth\CheckCredentialMiddleware::class,
+            'check.token'              => \App\Http\Middleware\Auth\CheckTokenMiddleware::class,
+            'check.user.exists.forgot' => \App\Http\Middleware\Auth\CheckUserExistForForgetMiddleware::class,
+            'check.validation'         => \App\Http\Middleware\CheckValidationMiddleware::class,
+            'check.verify.signup'      => \App\Http\Middleware\Auth\CheckVerifySignupMiddleware::class,
+        ]);
     })
-   ->withExceptions(function (Illuminate\Foundation\Configuration\Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions): void {
+        // Global exception handling for API routes (Integrated from teammate's structure)
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            // Only handle API routes and JSON requests
+            if ($request->is('api/*') || $request->expectsJson()) {
+                
+                // Handle validation exceptions
+                if ($e instanceof \Illuminate\Validation\ValidationException) {
+                    return response()->validation($e->errors(), 'Validation failed');
+                }
 
-    $exceptions->render(function (\Throwable $e, $request) {
+                // Handle authentication exceptions
+                if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                    return response()->unauthorized('Authentication required');
+                }
 
-        $status = 500;
-        $message = 'Internal Server Error';
+                // Handle authorization exceptions
+                if ($e instanceof \Illuminate\Auth\Access\AuthorizationException) {
+                    return response()->forbidden('Access denied');
+                }
 
-        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
-            $status = 404;
-            $message = 'Resource not found';
-        }
+                // Handle model not found exceptions
+                if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                    return response()->notFound('Resource not found');
+                }
 
-        if ($e instanceof \Illuminate\Auth\AuthenticationException) {
-            $status = 401;
-            $message = 'Unauthenticated';
-        }
+                // Handle method not allowed exceptions
+                if ($e instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
+                    return response()->error('Method not allowed', 405);
+                }
 
-        if ($e instanceof \Illuminate\Auth\Access\AuthorizationException) {
-            $status = 403;
-            $message = 'Unauthorized access';
-        }
+                // Handle not found exceptions
+                if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+                    return response()->notFound('Endpoint not found');
+                }
 
-        if ($e instanceof \Illuminate\Validation\ValidationException) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
-        }
+                // Get status code
+                $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
 
-        return response()->json([
-            'success' => false,
-            'message' => $message,
-            'error' => config('app.debug') ? $e->getMessage() : null,
-        ], $status);
+                // Handle general exceptions
+                $message = $e->getMessage() ?: 'Internal server error';
 
-    });
+                // Don't expose sensitive error details in production
+                if (app()->environment('production') && $status === 500) {
+                    $message = 'Internal server error';
+                }
 
-});
+                return response()->error($message, $status);
+            }
+        });
+    })->create();
