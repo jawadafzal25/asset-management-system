@@ -53,6 +53,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 422);
             }
 
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage() ?: 'Resource not found',
+                'error'   => null,
+            ], 404);
+        }
+
             // For any other exception
             return response()->json([
                 'success' => false,
