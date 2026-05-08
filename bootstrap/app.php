@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -13,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__ . '/../routes/web.php',
         api: [
             __DIR__ . '/../routes/auth.php',
+            __DIR__ . '/../routes/department.php',
+            __DIR__ . '/../routes/employee.php',
         ],
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
@@ -28,6 +31,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.user.exists.forgot' => \App\Http\Middleware\Auth\CheckUserExistForForgetMiddleware::class,
             'check.validation' => \App\Http\Middleware\CheckValidationMiddleware::class,
             'check.verify.signup' => \App\Http\Middleware\Auth\CheckVerifySignupMiddleware::class,
+
+            // Employee middleware
+            'check.employee' => \App\Http\Middleware\Employee\CheckEmployeeMiddleware::class,
+
+            // Department middleware
+            'check.dept' => \App\Http\Middleware\Department\CheckDepartmentMiddleware::class,
+
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
