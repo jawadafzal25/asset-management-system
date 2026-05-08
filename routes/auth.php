@@ -54,4 +54,11 @@ Route::prefix('auth')->group(function () {
             'check.token:forgot_password_token',
         ]);
 
+    // PATCH /api/auth/update-password
+    Route::patch('update-password', [AuthController::class, 'updatePassword'])
+        ->middleware([
+            'check.token',
+            'check.validation:update_password_request',
+        ]);
+
 });

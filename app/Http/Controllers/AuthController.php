@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SignupRequest;
+use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Http\Requests\Auth\VerifySignupRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\OrganizationResource;
@@ -136,5 +137,23 @@ class AuthController extends Controller
         $tokenRecord->delete();
 
         return response()->success(null, 'Password reset successfully!');
+    }
+
+    /**
+     * PATCH /api/auth/update-password
+     * Update user's password with authorization token validation
+     */
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        $user = data_get($request, 'user');
+        
+        // Update the password
+        $user->update([
+            'password' => $request->validated()['new_password'],
+        ]);
+
+        return response()->success([
+            'user' => UserResource::make($user),
+        ], 'Password updated successfully!');
     }
 }
