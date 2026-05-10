@@ -8,7 +8,8 @@ class EmployeeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // Set to true since we aren't using Auth yet
+        // Only authenticated users (validated by check.token middleware) can authorize this request
+        return auth()->check();
     }
 
     public function rules(): array

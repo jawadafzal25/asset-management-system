@@ -9,8 +9,6 @@ class Employee extends Model
 {
 
     protected $primaryKey = 'employee_id';
-
-
     protected $fillable = [
         'name',
         'father_name',
@@ -24,7 +22,7 @@ class Employee extends Model
         'department_id'
     ];
 
-  
+
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'department_id', 'department_id');

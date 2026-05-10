@@ -26,7 +26,7 @@ class DepartmentController extends Controller
     {
         if ($id) {
             // The model was already fetched by the CheckDepartmentMiddleware
-            $department = $request->attributes->get('department_data');
+            $department = data_get($request->attributes, 'department_data');
             return response()->success(new DepartmentResource($department));
         }
 
@@ -49,7 +49,7 @@ class DepartmentController extends Controller
     public function update(DepartmentRequest $request, $id)
     {
         // Get model from middleware attribute
-        $department = $request->attributes->get('department_data');
+        $department = data_get($request->attributes, 'department_data');
 
         $updated = $this->departmentService->update($department, $request->validated());
 
@@ -62,7 +62,7 @@ class DepartmentController extends Controller
     public function delete(Request $request, $id)
     {
         // Get model from middleware attribute
-        $department = $request->attributes->get('department_data');
+        $department = data_get($request->attributes, 'department_data');
 
         $this->departmentService->delete($department);
 

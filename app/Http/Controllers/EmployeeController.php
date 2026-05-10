@@ -20,7 +20,7 @@ class EmployeeController extends Controller
     {
         if ($id) {
             // Get from Middleware attribute
-            $employee = $request->attributes->get('employee_data');
+            $employee = data_get($request->attributes, 'employee_data');
             // Load department relationship for the single view
             return response()->success(new EmployeeResource($employee->load('department')));
         }
@@ -37,7 +37,7 @@ class EmployeeController extends Controller
 
     public function update(EmployeeRequest $request, $id)
     {
-        $employee = $request->attributes->get('employee_data');
+        $employee = data_get($request->attributes, 'employee_data');
         $updated = $this->employeeService->update($employee, $request->validated());
 
         return response()->success(new EmployeeResource($updated), "Employee updated successfully");
@@ -45,7 +45,7 @@ class EmployeeController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $employee = $request->attributes->get('employee_data');
+        $employee = data_get($request->attributes, 'employee_data');
         $this->employeeService->delete($employee);
 
         return response()->success(null, "Employee deleted successfully");

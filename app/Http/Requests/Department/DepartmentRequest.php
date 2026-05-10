@@ -8,7 +8,8 @@ class DepartmentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // Set to true to allow the request
+        // Only authenticated users (validated by check.token middleware) can authorize this request
+        return auth()->check();
     }
 
     public function rules(): array
