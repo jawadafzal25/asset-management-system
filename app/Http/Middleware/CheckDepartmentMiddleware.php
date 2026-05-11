@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware\Department;
+namespace App\Http\Middleware;
 
 use Closure;
 use App\Models\Department;

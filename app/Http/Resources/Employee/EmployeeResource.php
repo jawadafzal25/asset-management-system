@@ -28,7 +28,7 @@ class EmployeeResource extends JsonResource
             // This only shows if you use 'with("department")' in your Service/Middleware
             'department'    => new DepartmentResource($this->whenLoaded('department')),
 
-            'created_at'    => $this->created_at->format('Y-m-d H:i:s'),
+            'created_at'    => $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : null,
         ];
     }
 }

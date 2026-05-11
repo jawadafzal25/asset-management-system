@@ -19,7 +19,8 @@ class EmployeeService
      */
     public function create(array $data)
     {
-        return Employee::create($data);
+        $employee = Employee::create($data);
+        return $employee->load('department');
     }
 
     /**
