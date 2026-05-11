@@ -27,7 +27,7 @@ class UpdateAssetRequest extends FormRequest
             'asset_name'     => ['sometimes', 'string', 'max:150'],
             'asset_code'     => ['sometimes', 'string', 'max:50', 'unique:assets,asset_code,' . ($asset?->id ?? 'NULL')],
             'category_id'    => ['sometimes', 'integer', 'exists:categories,id'],
-            'department_id'  => ['sometimes', 'integer', 'exists:departments,id'],
+            'department_id'  => ['sometimes', 'integer', 'exists:departments,department_id'],
             'brand'          => ['nullable', 'string', 'max:100'],
             'purchase_date'  => ['nullable', 'date', 'before_or_equal:today'],
             'total_quantity' => [

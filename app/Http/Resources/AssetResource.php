@@ -30,8 +30,8 @@ class AssetResource extends JsonResource
                 'name' => $this->category->name,
             ]),
             'department'        => $this->whenLoaded('department', fn() => [
-                'id'   => $this->department->id,
-                'name' => $this->department->name,
+                'id'   => $this->department->department_id,
+                'name' => $this->department->department_name,
             ]),
 
             'categoryId'        => $this->category_id,

@@ -30,7 +30,7 @@ class AssetService
             ])
             ->with([
                 'category:id,name', 
-                'department:id,name'
+                'department:department_id,department_name'
             ]);
 
         // Filtering

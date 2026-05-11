@@ -8,16 +8,13 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * Creates the departments table for asset assignment tracking.
      */
     public function up(): void
     {
         Schema::create('departments', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 100)->unique();
-            $table->text('description')->nullable();
+            $table->id('department_id'); // Primary Key
+            $table->string('department_name')->unique();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
