@@ -5,16 +5,27 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
+    ->withKernels()
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        api: [
+            __DIR__.'/../routes/assignment.php', // Syntax error se bachne ke liye isay 'api' array mein rakha hai
+        ],
         commands: __DIR__.'/../routes/console.php',
-
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        
+        // Aapke Assignment module ki 4 middlewares yahan register ho gayi hain
+        $middleware->alias([
+            'assign.permission' => \App\Http\Middleware\Assignment\CheckAssignmentPermissionMiddleware::class,
+            'validate.entities' => \App\Http\Middleware\Assignment\ValidateEntitiesMiddleware::class,
+            'check.stock'       => \App\Http\Middleware\Assignment\CheckAssetStockMiddleware::class,
+            'verify.active'     => \App\Http\Middleware\Assignment\VerifyActiveAssignmentMiddleware::class,
+        ]);
+
     })
-   ->withExceptions(function (Illuminate\Foundation\Configuration\Exceptions $exceptions) {
+   ->withExceptions(function (Exceptions $exceptions) {
 
     $exceptions->render(function (\Throwable $e, $request) {
 
@@ -52,4 +63,4 @@ return Application::configure(basePath: dirname(__DIR__))
 
     });
 
-});
+})->create();
