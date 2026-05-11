@@ -31,6 +31,8 @@ class Asset extends Model
         'remaining_quantity',
         'purchase_date',
         'status',
+        'asset_image',
+        'invoice_image',
     ];
 
     /**

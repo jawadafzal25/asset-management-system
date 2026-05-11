@@ -5,11 +5,13 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * AssetResource
  *
  * Transforms the Asset model into a clean, standardised API response structure.
+ * Now includes full URLs for asset images and invoices.
  */
 class AssetResource extends JsonResource
 {
@@ -43,6 +45,10 @@ class AssetResource extends JsonResource
             'assignedQuantity'  => $this->assigned_quantity,
 
             'status'            => $this->status,
+
+            // File URLs
+            'assetImage'        => $this->asset_image ? asset(Storage::url($this->asset_image)) : null,
+            'invoiceImage'      => $this->invoice_image ? asset(Storage::url($this->invoice_image)) : null,
 
             'createdAt'         => $this->created_at?->toISOString(),
             'updatedAt'         => $this->updated_at?->toISOString(),

@@ -29,6 +29,8 @@ class CreateAssetRequest extends FormRequest
             'purchase_date'  => ['nullable', 'date', 'before_or_equal:today'],
             'total_quantity' => ['required', 'integer', 'min:1'],
             'status'         => ['nullable', 'string', 'in:' . implode(',', Asset::STATUSES)],
+            'asset_image'    => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'invoice_image'  => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ];
     }
 

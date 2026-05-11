@@ -57,6 +57,8 @@ class UpdateAssetRequest extends FormRequest
                 },
             ],
             'status' => ['sometimes', 'string', 'in:' . implode(',', Asset::STATUSES)],
+            'asset_image'    => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'invoice_image'  => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ];
     }
 
