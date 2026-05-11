@@ -18,8 +18,16 @@ class AssignmentController extends Controller
 
     public function checkout(CheckoutAssetRequest $request)
     {
-        // Service layer data process karegi. Agar koi error aya toh Global Handler khud catch karega.
-        $assignment = $this->assignmentService->checkout($request->validated());
+        // 1. Request se validated array nikala
+        $validatedData = $request->validated();
+        
+        // 2. Sir ki requirement ke mutabiq data_get() use karke securely data pass kiya
+        $assignment = $this->assignmentService->checkout([
+            'asset_id'    => data_get($validatedData, 'asset_id'),
+            'employee_id' => data_get($validatedData, 'employee_id'),
+            'quantity'    => data_get($validatedData, 'quantity', 1),
+            'description' => data_get($validatedData, 'description'),
+        ]);
         
         // Using your Global Response Macro for Success
         return response()->success(
@@ -31,7 +39,12 @@ class AssignmentController extends Controller
 
     public function checkin(CheckinAssetRequest $request)
     {
-        $assignment = $this->assignmentService->checkin($request->validated());
+        $validatedData = $request->validated();
+
+        // data_get() ka use
+        $assignment = $this->assignmentService->checkin([
+            'asset_id' => data_get($validatedData, 'asset_id'),
+        ]);
         
         return response()->success(
             new AssignmentResource($assignment), 
