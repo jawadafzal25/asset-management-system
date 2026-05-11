@@ -35,7 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.employee' => \App\Http\Middleware\Employee\CheckEmployeeMiddleware::class,
 
             // Department middleware
-            'check.dept' => \App\Http\Middleware\Department\CheckDepartmentMiddleware::class,
+            'check.dept' => \App\Http\Middleware\CheckDepartmentMiddleware::class,
 
         ]);
     })
