@@ -28,7 +28,7 @@ class User extends Authenticatable
         'is_active',
         'verification_code',
         'organization_id',
-        'fcm_token',
+        'role',
     ];
 
     /**
@@ -109,6 +109,7 @@ class User extends Authenticatable
             'organization_id'   => $data['organization_id'] ?? null,
             'is_active'         => false,
             'verification_code' => null,
+            'role'              => 'admin',
         ]);
     }
 }
