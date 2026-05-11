@@ -59,7 +59,7 @@ class AssetController extends Controller
      */
     public function read(Request $request): JsonResponse
     {
-        $asset = $request->attributes->get('asset');
+        $asset = data_get($request->attributes->all(), 'asset');
 
         return response()->success(
             new AssetResource($asset),
@@ -73,7 +73,7 @@ class AssetController extends Controller
     public function update(UpdateAssetRequest $request): JsonResponse
     {
         /** @var Asset $asset */
-        $asset = $request->attributes->get('asset');
+        $asset = data_get($request->attributes->all(), 'asset');
 
         $updatedAsset = $this->assetService->updateAsset($asset, $request->validated());
 
@@ -91,7 +91,7 @@ class AssetController extends Controller
     public function delete(Request $request): JsonResponse
     {
         /** @var Asset $asset */
-        $asset = $request->attributes->get('asset');
+        $asset = data_get($request->attributes->all(), 'asset');
 
         $this->assetService->deleteAsset($asset);
 

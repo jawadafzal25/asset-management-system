@@ -19,7 +19,9 @@ class CheckAssetExists
     {
         $id = $request->route('id');
 
-        $asset = Asset::with(['category', 'department'])->find($id);
+        $asset = Asset::select(['id', 'asset_name', 'asset_code', 'category_id', 'department_id', 'brand', 'purchase_date', 'total_quantity', 'remaining_quantity', 'status', 'created_at'])
+            ->with(['category:id,name', 'department:id,name'])
+            ->find($id);
 
         if (!$asset) {
             return response()->notFound('Asset not found.');

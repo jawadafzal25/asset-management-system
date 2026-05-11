@@ -19,7 +19,15 @@ class AssetService
      */
     public function getAllAssets(Request $request): LengthAwarePaginator
     {
-        $query = Asset::with(['category', 'department']);
+        $query = Asset::select([
+                'id', 'asset_name', 'asset_code', 'category_id', 
+                'department_id', 'brand', 'purchase_date', 
+                'total_quantity', 'remaining_quantity', 'status', 'created_at'
+            ])
+            ->with([
+                'category:id,name', 
+                'department:id,name'
+            ]);
 
         // Filtering
         if ($request->filled('category_id')) {
