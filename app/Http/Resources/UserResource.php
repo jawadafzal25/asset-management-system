@@ -13,6 +13,7 @@ class UserResource extends JsonResource
             'id'                => $this->id,
             'name'              => $this->name,
             'email'             => $this->email,
+            'role'              => $this->role,
             'organization_id'   => $this->organization_id,
             'organization'      => $this->when($this->organization, OrganizationResource::make($this->organization)),
             'is_active'         => $this->is_active,
