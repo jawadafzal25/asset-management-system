@@ -9,14 +9,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: [
-            __DIR__.'/../routes/assignment.php', // Syntax error se bachne ke liye isay 'api' array mein rakha hai
+            __DIR__.'/../routes/assignment.php',
         ],
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
         
-        // Aapke Assignment module ki 4 middlewares yahan register ho gayi hain
         $middleware->alias([
             'assign.permission' => \App\Http\Middleware\Assignment\CheckAssignmentPermissionMiddleware::class,
             'validate.entities' => \App\Http\Middleware\Assignment\ValidateEntitiesMiddleware::class,

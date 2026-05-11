@@ -21,15 +21,12 @@ return new class extends Migration
             // int column
             $table->integer('quantity')->default(1);
 
-            // date columns (image mein data type 'date' hai, isliye $table->date use kiya)
             $table->date('assign_date'); 
             $table->date('return_date')->nullable(); 
 
             // varchar column
             $table->string('status'); 
 
-            // Image mein sirf created_at hai, lekin Laravel mein $table->timestamps() use karna best practice hai
-            // jo created_at aur updated_at dono bana deta hai.
             $table->timestamps(); 
         });
     }

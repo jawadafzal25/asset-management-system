@@ -16,8 +16,8 @@ class AssignmentResource extends JsonResource
             'assigned_by'   => $this->assigned_by,
             'quantity'      => $this->quantity,
             'status'        => $this->status,
-            'assign_date'   => $this->assign_date, // Naya column name
-            'return_date'   => $this->return_date, // Naya column name
+            'assign_date'   => $this->assign_date, 
+            'return_date'   => $this->return_date, 
             'is_active'     => is_null($this->return_date),
         ];
     }

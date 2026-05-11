@@ -5,7 +5,6 @@ use App\Http\Controllers\AssignmentController;
  //use App\Http\Middleware\CheckTokenMiddleware; 
 
 Route::middleware([
-    //CheckTokenMiddleware::class, 'assign.permission',
      'validate.entities'])
     ->prefix('assignments')
     ->group(function () {

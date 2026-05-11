@@ -18,10 +18,9 @@ class AssignmentController extends Controller
 
     public function checkout(CheckoutAssetRequest $request)
     {
-        // 1. Request se validated array nikala
+        // 1. Request se validated array
         $validatedData = $request->validated();
         
-        // 2. Sir ki requirement ke mutabiq data_get() use karke securely data pass kiya
         $assignment = $this->assignmentService->checkout([
             'asset_id'    => data_get($validatedData, 'asset_id'),
             'employee_id' => data_get($validatedData, 'employee_id'),
@@ -29,7 +28,6 @@ class AssignmentController extends Controller
             'description' => data_get($validatedData, 'description'),
         ]);
         
-        // Using your Global Response Macro for Success
         return response()->success(
             new AssignmentResource($assignment), 
             'Asset checked out successfully.', 
@@ -41,7 +39,6 @@ class AssignmentController extends Controller
     {
         $validatedData = $request->validated();
 
-        // data_get() ka use
         $assignment = $this->assignmentService->checkin([
             'asset_id' => data_get($validatedData, 'asset_id'),
         ]);
@@ -53,7 +50,6 @@ class AssignmentController extends Controller
         );
     }
 
-    // $assetId = null kar diya taake specific aur all dono routes kaam karein
     public function history($assetId = null) 
     {
         $history = $this->assignmentService->getHistory($assetId);
