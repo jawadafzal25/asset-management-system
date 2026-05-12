@@ -9,12 +9,7 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    protected $employeeService;
-
-    public function __construct(EmployeeService $employeeService)
-    {
-        $this->employeeService = $employeeService;
-    }
+    public function __construct(protected EmployeeService $employeeService) {}
 
     public function read(Request $request)
     {
