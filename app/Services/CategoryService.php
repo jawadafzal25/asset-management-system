@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Schema;
 use App\Repositories\CategoryRepository;
 
 class CategoryService
@@ -37,7 +38,11 @@ class CategoryService
     {
         $category = $this->repo->read($id);
 
-        if ($category->assets()->exists()) {
+        if (
+            class_exists(\App\Models\Asset::class) &&
+            Schema::hasTable('assets') &&
+            $category->assets()->exists()
+        ) {
             throw new AuthorizationException(
                 'Cannot delete category because assets exist'
             );
