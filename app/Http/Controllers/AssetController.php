@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 /**
  * AssetController
  *
- * Updated to use the renamed CreateAssetRequest.
+ * Cleaned up and optimized for GridFS integration.
  */
 class AssetController extends Controller
 {
@@ -42,8 +42,12 @@ class AssetController extends Controller
      */
     public function create(CreateAssetRequest $request): JsonResponse
     {
-        // Validation automatically handled by CreateAssetRequest
-        $asset = $this->assetService->createAsset($request->validated());
+        $data = array_merge($request->validated(), [
+            'asset_image' => $request->file('asset_image'),
+            'invoice_image' => $request->file('invoice_image'),
+        ]);
+
+        $asset = $this->assetService->createAsset($data);
 
         $asset->load(['category', 'department']);
 
@@ -75,7 +79,12 @@ class AssetController extends Controller
         /** @var Asset $asset */
         $asset = data_get($request->attributes->all(), 'asset');
 
-        $updatedAsset = $this->assetService->updateAsset($asset, $request->validated());
+        $data = array_merge($request->validated(), [
+            'asset_image' => $request->file('asset_image'),
+            'invoice_image' => $request->file('invoice_image'),
+        ]);
+
+        $updatedAsset = $this->assetService->updateAsset($asset, $data);
 
         $updatedAsset->load(['category', 'department']);
 
