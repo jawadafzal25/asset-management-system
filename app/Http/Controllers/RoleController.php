@@ -6,7 +6,7 @@ use App\Http\Requests\Role\RoleCreateRequest;
 use App\Http\Requests\Role\RoleUpdateRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Role;
-use App\Models\Permission;
+use App\Models\Permission\Permission;
 use Illuminate\Http\JsonResponse;
 
 class RoleController extends Controller
@@ -35,8 +35,10 @@ class RoleController extends Controller
             $role->permissions()->attach($validated['permissions']);
         }
 
+        $role->load('permissions');
+
         return response()->success(
-            new RoleResource($role->load('permissions')),
+            new RoleResource($role),
             'Role created successfully.'
         );
     }
