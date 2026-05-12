@@ -23,9 +23,13 @@ class RoleUpdateRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string|max:255|unique:roles,name,' . $this->route('id'),
+            'slug' => 'sometimes|required|string|max:255|unique:roles,slug,' . $this->route('id'),
             'description' => 'nullable|string|max:1000',
+            'is_active' => 'nullable|boolean',
             'permissions' => 'nullable|array',
             'permissions.*' => 'integer|exists:permissions,permission_id',
+            'permission' => 'nullable|array',
+            'permission.*' => 'integer|exists:permissions,permission_id',
         ];
     }
 
