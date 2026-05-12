@@ -43,6 +43,10 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Global exception handling for API routes
+        $exceptions->reportable(function (\Throwable $e) {
+            \App\Services\WebhookNotifierService::notifyIfServerError($e);
+        });
+
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             // Only handle API routes and JSON requests
             if ($request->is('api/*') || $request->expectsJson()) {
