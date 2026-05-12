@@ -8,9 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
-    protected $primaryKey = 'role_id';
+    protected $primaryKey = 'id';
 
-    protected $fillable = ['role_name'];
+    protected $fillable = [
+        'name',
+        'slug', 
+        'description',
+        'is_active'
+    ];
 
     /**
      * Permissions attached to this role via role_permissions pivot.

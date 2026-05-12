@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__ . '/../routes/department.php',
             __DIR__ . '/../routes/employee.php',
             __DIR__ . '/../routes/permission.php',   // Zain — Permission Module
+            __DIR__ . '/../routes/role.php',         // Role Module
         ],
 
         apiPrefix: 'api',
