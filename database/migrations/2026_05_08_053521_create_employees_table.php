@@ -30,8 +30,7 @@ return new class extends Migration
 
         // Relationship: COMPULSORY Department Link
         $table->foreignId('department_id')
-              ->constrained('departments', 'department_id')
-              ->onDelete('cascade');
+              ->comment('References departments.department_id - constraint added separately');
 
         $table->timestamps();
     });

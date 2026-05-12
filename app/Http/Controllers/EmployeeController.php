@@ -16,22 +16,16 @@ class EmployeeController extends Controller
         $this->employeeService = $employeeService;
     }
 
-    public function read(Request $request, $id = null)
+    public function read(Request $request)
     {
-        if ($id) {
-            // Get from Middleware attribute
-            $employee = $request->attributes->get('employee_data');
-            
-            if (!$employee) {
-                return response()->error("Employee data not found in middleware", 500);
-            }
-            
-            // Load department relationship for the single view
-            return response()->success(new EmployeeResource($employee->load('department')));
-        }
-
         $employees = $this->employeeService->read();
         return response()->success(EmployeeResource::collection($employees));
+    }
+
+    public function detail(Request $request)
+    {
+        $employee = data_get($request->attributes->all(), 'employee_data');
+        return response()->success(new EmployeeResource($employee));
     }
 
     public function create(EmployeeRequest $request)
@@ -40,29 +34,17 @@ class EmployeeController extends Controller
         return response()->success(new EmployeeResource($employee), "Employee created successfully", 201);
     }
 
-    public function update(EmployeeRequest $request, $id)
+    public function update(EmployeeRequest $request)
     {
-        $employee = $request->attributes->get('employee_data');
-        
-        if (!$employee) {
-            return response()->error("Employee data not found in middleware", 500);
-        }
-        
+        $employee = data_get($request->attributes->all(), 'employee_data');
         $updated = $this->employeeService->update($employee, $request->validated());
-
         return response()->success(new EmployeeResource($updated), "Employee updated successfully");
     }
 
-    public function delete(Request $request, $id)
+    public function delete(Request $request)
     {
-        $employee = $request->attributes->get('employee_data');
-        
-        if (!$employee) {
-            return response()->error("Employee data not found in middleware", 500);
-        }
-        
+        $employee = data_get($request->attributes->all(), 'employee_data');
         $this->employeeService->delete($employee);
-
         return response()->success(null, "Employee deleted successfully");
     }
 }
