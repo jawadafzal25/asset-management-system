@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CategoryService;
+use App\Http\Resources\CategoryResource;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 
@@ -15,12 +16,15 @@ class CategoryController extends Controller
 
     public function create(CreateCategoryRequest $request)
     {
-        $data = $this->service->create(
-            $request->validated()
-        );
+        $validated = $request->validated();
+
+        $data = $this->service->create([
+            'name' => data_get($validated, 'name'),
+            'description' => data_get($validated, 'description'),
+        ]);
 
         return response()->success(
-            $data,
+            new CategoryResource($data),
             'Category created successfully',
             201
         );
@@ -29,11 +33,11 @@ class CategoryController extends Controller
     public function read(Request $request)
     {
         $data = $this->service->readAll(
-            $request->search
+            data_get($request, 'search')
         );
 
         return response()->success(
-            $data,
+            CategoryResource::collection($data),
             'Categories fetched successfully'
         );
     }
@@ -43,7 +47,7 @@ class CategoryController extends Controller
         $data = $this->service->read($id);
 
         return response()->success(
-            $data,
+            new CategoryResource($data),
             'Category detail fetched successfully'
         );
     }
@@ -52,13 +56,18 @@ class CategoryController extends Controller
         UpdateCategoryRequest $request,
         $id
     ) {
+        $validated = $request->validated();
+
         $data = $this->service->update(
             $id,
-            $request->validated()
+            [
+                'name' => data_get($validated, 'name'),
+                'description' => data_get($validated, 'description'),
+            ]
         );
 
         return response()->success(
-            $data,
+            new CategoryResource($data),
             'Category updated successfully'
         );
     }
