@@ -9,13 +9,14 @@ class CategoryRepository
     public function readAll($search = null)
     {
         return Category::query()
-            ->when($search, fn($q) =>
-                $q->where('name', 'like', "%$search%")
-            )
-            ->latest()
-            ->paginate(10);
-    }
-
+            ->when(
+                $search !== null && $search !== '',
+                fn($q) =>
+            $q->where('name', 'like', "%{$search}%")
+        )
+        ->latest()
+        ->paginate(10);
+}
     public function read($id)
     {
         return Category::findOrFail($id);
