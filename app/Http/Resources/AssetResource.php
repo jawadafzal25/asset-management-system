@@ -5,13 +5,12 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * AssetResource
  *
  * Transforms the Asset model into a clean, standardised API response structure.
- * Now includes full URLs for asset images and invoices.
+ * Now integrated with MongoDB GridFS for file streaming.
  */
 class AssetResource extends JsonResource
 {
@@ -30,8 +29,8 @@ class AssetResource extends JsonResource
                 'name' => $this->category->name,
             ]),
             'department'        => $this->whenLoaded('department', fn() => [
-                'id'   => $this->department->id,
-                'name' => $this->department->name,
+                'id'   => $this->department->department_id,
+                'name' => $this->department->department_name,
             ]),
 
             'categoryId'        => $this->category_id,
@@ -46,9 +45,9 @@ class AssetResource extends JsonResource
 
             'status'            => $this->status,
 
-            // File URLs
-            'assetImage'        => $this->asset_image ? asset(Storage::url($this->asset_image)) : null,
-            'invoiceImage'      => $this->invoice_image ? asset(Storage::url($this->invoice_image)) : null,
+            // GridFS Streaming URLs
+            'assetImage'        => $this->asset_image ? route('files.stream', ['id' => $this->asset_image]) : null,
+            'invoiceImage'      => $this->invoice_image ? route('files.stream', ['id' => $this->invoice_image]) : null,
 
             'createdAt'         => $this->created_at?->toISOString(),
             'updatedAt'         => $this->updated_at?->toISOString(),

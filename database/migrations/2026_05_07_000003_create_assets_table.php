@@ -30,7 +30,7 @@ return new class extends Migration
                   ->restrictOnDelete();
 
             $table->foreignId('department_id')
-                  ->constrained('departments')
+                  ->constrained('departments', 'department_id')
                   ->restrictOnDelete();
 
             // Asset details

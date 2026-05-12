@@ -24,7 +24,7 @@ class CreateAssetRequest extends FormRequest
             'asset_name'     => ['required', 'string', 'max:150'],
             'asset_code'     => ['required', 'string', 'max:50', 'unique:assets,asset_code'],
             'category_id'    => ['required', 'integer', 'exists:categories,id'],
-            'department_id'  => ['required', 'integer', 'exists:departments,id'],
+            'department_id'  => ['required', 'integer', 'exists:departments,department_id'],
             'brand'          => ['nullable', 'string', 'max:100'],
             'purchase_date'  => ['nullable', 'date', 'before_or_equal:today'],
             'total_quantity' => ['required', 'integer', 'min:1'],

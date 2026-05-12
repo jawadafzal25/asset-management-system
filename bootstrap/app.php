@@ -12,11 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         api: [
+            __DIR__ . '/../routes/asset.php',      // Asset Module routes
             __DIR__ . '/../routes/auth.php',
             __DIR__ . '/../routes/department.php',
             __DIR__ . '/../routes/employee.php',
-            __DIR__ . '/../routes/asset.php',   
-            __DIR__ . '/../routes/category.php',
+            __DIR__ . '/../routes/file.php',       // GridFS streaming routes
         ],
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
