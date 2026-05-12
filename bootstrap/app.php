@@ -30,7 +30,11 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__ . '/../routes/category.php', 
             __DIR__ . '/../routes/asset.php',
         ],
+
+        apiPrefix: 'api',
+
         commands: __DIR__ . '/../routes/console.php',
+
         health: '/up',
     )
 
