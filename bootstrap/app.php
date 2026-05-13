@@ -30,7 +30,10 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__ . '/../routes/user_role.php',
             __DIR__ . '/../routes/category.php', 
             __DIR__ . '/../routes/asset.php',
+<<<<<<< HEAD
             __DIR__ . '/../routes/file.php',
+=======
+>>>>>>> 0b3359f753f5b40ddb9b5dc7e958030d2d6b3b32
             __DIR__ . '/../routes/maintenance.php',
         ],
 
