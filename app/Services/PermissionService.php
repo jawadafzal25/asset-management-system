@@ -19,7 +19,7 @@ class PermissionService
     /**
      * Return all permissions grouped by module.
      */
-    public function allGroupedByModule(): Collection
+    public function allGroupedByModule(): \Illuminate\Support\Collection
     {
         return $this->permissionRepository->allGroupedByModule();
     }

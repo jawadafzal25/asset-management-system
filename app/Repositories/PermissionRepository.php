@@ -12,7 +12,7 @@ class PermissionRepository
      * Return all permissions grouped by module.
      * Used by frontend to render tick-box groups per module.
      */
-    public function allGroupedByModule(): Collection
+    public function allGroupedByModule(): \Illuminate\Support\Collection
     {
         $all = Permission::all();
 
