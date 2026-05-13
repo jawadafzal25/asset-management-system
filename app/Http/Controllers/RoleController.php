@@ -23,23 +23,20 @@ class RoleController extends Controller
         // Create role data
         $roleData = [
             'name' => $validated['name'],
-            'slug' => strtolower(str_replace(' ', '-', $validated['name'])),
+            'slug' => $validated['slug'] ?? strtolower(str_replace(' ', '-', $validated['name'])),
             'description' => $validated['description'] ?? null,
-            'is_active' => true,
+            'is_active' => $validated['is_active'] ?? true,
         ];
 
         $role = Role::create($roleData);
 
-        // Attach permissions if provided
-        $permissionIds = array_unique(array_merge(
-            $validated['permissions'] ?? [],
-            $validated['permission'] ?? []
-        ));
-        
+        // Attach permissions if provided (support both 'permissions' and 'permission')
+        $permissionIds = $validated['permissions'] ?? $validated['permission'] ?? [];
         if (!empty($permissionIds)) {
-            $role->permissions()->attach($permissionIds);
+            $role->permissions()->attach(array_unique($permissionIds));
         }
 
+        // Always load permissions for response
         $role->load('permissions');
 
         return response()->success(
@@ -77,21 +74,17 @@ class RoleController extends Controller
         // Update role data
         $roleData = [
             'name' => $validated['name'] ?? $role->name,
-            'slug' => strtolower(str_replace(' ', '-', $validated['name'] ?? $role->name)),
+            'slug' => $validated['slug'] ?? ($validated['name'] ? strtolower(str_replace(' ', '-', $validated['name'])) : $role->slug),
             'description' => $validated['description'] ?? $role->description,
             'is_active' => $validated['is_active'] ?? $role->is_active,
         ];
 
         $role->update($roleData);
 
-        // Update permissions if provided
-        $permissionIds = array_unique(array_merge(
-            $validated['permissions'] ?? [],
-            $validated['permission'] ?? []
-        ));
-
-        if ($request->has('permissions') || $request->has('permission')) {
-            $role->permissions()->sync($permissionIds);
+        // Update permissions if provided (support both 'permissions' and 'permission')
+        $permissionIds = $validated['permissions'] ?? $validated['permission'] ?? null;
+        if ($permissionIds !== null) {
+            $role->permissions()->sync(array_unique($permissionIds));
         }
 
         return response()->success(

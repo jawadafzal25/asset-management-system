@@ -29,6 +29,7 @@ class User extends Authenticatable
         'verification_code',
         'organization_id',
         'role',
+        'profile_picture',
     ];
 
     /**

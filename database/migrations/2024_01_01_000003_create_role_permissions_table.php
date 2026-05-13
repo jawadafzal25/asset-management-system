@@ -14,7 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('permission_id');
 
             $table->foreign('role_id')
-                ->references('role_id')
+                ->references('id')
                 ->on('roles')
                 ->cascadeOnDelete();
 
