@@ -7,5 +7,6 @@ Route::get('/', function () {
 });
 Route::get('/test-webhook', function () {
     // Yeh line jaan boojh kar 500 Internal Server Error throw karegi
+    dump($a->asdfasdf);
     throw new \Exception('Ahsan is testing the WhistleIt Webhook! This is a fake crash.');
 });
