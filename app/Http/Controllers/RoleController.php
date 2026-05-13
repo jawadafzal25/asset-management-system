@@ -81,14 +81,10 @@ class RoleController extends Controller
 
         $role->update($roleData);
 
-        // Update permissions if provided
-        $permissionIds = array_unique(array_merge(
-            $validated['permissions'] ?? [],
-            $validated['permission'] ?? []
-        ));
-
-        if ($request->has('permissions') || $request->has('permission')) {
-            $role->permissions()->sync($permissionIds);
+        // Update permissions if provided (support both 'permissions' and 'permission')
+        $permissionIds = $validated['permissions'] ?? $validated['permission'] ?? null;
+        if ($permissionIds !== null) {
+            $role->permissions()->sync(array_unique($permissionIds));
         }
 
         return response()->success(
