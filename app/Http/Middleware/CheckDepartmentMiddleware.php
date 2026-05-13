@@ -24,8 +24,6 @@ class CheckDepartmentMiddleware
                 return response()->notFound("Department with ID $id not found.");
             }
 
-            // 4. If found, attach the department object to the request.
-            // This prevents the Controller from having to query the DB again.
             $request->attributes->add(['department_data' => $department]);
         }
 
