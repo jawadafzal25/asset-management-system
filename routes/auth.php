@@ -61,11 +61,11 @@ Route::prefix('auth')->group(function () {
             'check.token',
         ]);
 
-    // POST /api/auth/update
-    Route::post('update', [AuthController::class, 'update'])
+    // PUT /api/auth/update
+    Route::put('update', [AuthController::class, 'update'])
         ->middleware([
             'check.token',
-            'handle.profile_picture',
+            'check.profile_picture',
         ]);
 
 });
