@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +12,10 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $primaryKey = 'id';
+    protected $keyType = 'int';
+    public $incrementing = true;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,6 +25,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active',
+        'verification_code',
+        'organization_id',
+        'role',
+        'role_id',
+        'profile_picture',
     ];
 
     /**
@@ -32,10 +41,11 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_code',
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -43,7 +53,93 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
+            'is_active'         => 'boolean',
         ];
+    }
+
+    /**
+     * Get the organization the user belongs to
+     */
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organization_id', 'id');
+    }
+
+    /**
+     * Get the session tokens for the user
+     */
+    public function sessionTokens()
+    {
+        return $this->hasMany(SessionToken::class);
+    }
+
+    /**
+     * Get the forget tokens for the user
+     */
+    public function forgetTokens()
+    {
+        return $this->hasMany(SessionToken::class)->where('type', 'forgot_password_token');
+    }
+
+    /**
+     * Add a new user with validation
+     */
+    public static function add($data)
+    {
+        // Handle if data is a request object with validated() method
+        if (is_object($data) && method_exists($data, 'validated')) {
+            $data = $data->validated();
+        }
+
+        // Normalize email to lowercase
+        $data['email'] = strtolower(trim($data['email']));
+
+        // Check if user exists
+        $existingUser = self::where('email', $data['email'])->first();
+        if ($existingUser) {
+            abort(response()->json([
+                'success' => false,
+                'message' => 'User already exists with this email.',
+            ], 409));
+        }
+
+        return self::create([
+            'name'              => $data['name'],
+            'email'             => $data['email'],
+            'password'          => $data['password'],
+            'organization_id'   => $data['organization_id'] ?? null,
+            'is_active'         => false,
+            'verification_code' => null,
+            'role'              => 'admin',
+        ]);
+    }
+
+    /**
+     * Role relationship
+     */
+    public function assignedRole()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * Check if user has a specific permission via their role.
+     */
+    public function hasPermission(string $permissionName): bool
+    {
+        if (!$this->role_id || !$this->assignedRole) {
+            return false;
+        }
+
+        return $this->assignedRole->hasPermission($permissionName);
+    }
+
+    /**
+     * Check if user is a main admin (Super Admin).
+     */
+    public function isMainAdmin(): bool
+    {
+        return $this->assignedRole && $this->assignedRole->slug === 'super-admin';
     }
 }
