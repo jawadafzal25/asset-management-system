@@ -28,7 +28,7 @@ class Role extends Model
             'role_permissions',
             'role_id',
             'permission_id',
-            'role_id',
+            'id',
             'permission_id'
         );
     }
