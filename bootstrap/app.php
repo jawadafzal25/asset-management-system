@@ -103,6 +103,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'check.dept' =>
             \App\Http\Middleware\CheckDepartmentMiddleware::class,
+
+            'check.role_permission' =>
+            \App\Http\Middleware\Role\CheckRolePermissionMiddleware::class,
         ]);
     })
 

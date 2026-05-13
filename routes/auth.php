@@ -3,12 +3,6 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Authentication Routes
-| Base URL: /api/auth/*
-|--------------------------------------------------------------------------
-*/
 
 Route::prefix('auth')->group(function () {
 
