@@ -21,6 +21,7 @@ class CategoryController extends Controller
         $data = $this->service->create([
             'name' => data_get($validated, 'name'),
             'description' => data_get($validated, 'description'),
+            'status' => data_get($validated, 'status'),
         ]);
 
         return response()->success(
@@ -63,6 +64,7 @@ class CategoryController extends Controller
             [
                 'name' => data_get($validated, 'name'),
                 'description' => data_get($validated, 'description'),
+                'status' => data_get($validated, 'status'),
             ]
         );
 
