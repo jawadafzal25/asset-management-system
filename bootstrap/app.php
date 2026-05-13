@@ -83,7 +83,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.verify.signup' =>
             \App\Http\Middleware\Auth\CheckVerifySignupMiddleware::class,
 
-            'handle.profile_picture' =>
+            'check.profile_picture' =>
             \App\Http\Middleware\Auth\CheckProfileUpdateMiddleware::class,
 
             /*
@@ -103,6 +103,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'check.dept' =>
             \App\Http\Middleware\CheckDepartmentMiddleware::class,
+
+            'check.role_permission' =>
+            \App\Http\Middleware\Role\CheckRolePermissionMiddleware::class,
         ]);
     })
 

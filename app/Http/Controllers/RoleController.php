@@ -6,8 +6,6 @@ use App\Http\Requests\Role\RoleCreateRequest;
 use App\Http\Requests\Role\RoleUpdateRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Role;
-use App\Models\Permission\Permission;
-use Illuminate\Http\JsonResponse;
 
 class RoleController extends Controller
 {
@@ -16,31 +14,18 @@ class RoleController extends Controller
      *
      * Create a new role with permissions.
      */
-    public function create(RoleCreateRequest $request): JsonResponse
+    public function create(RoleCreateRequest $request)
     {
         $validated = $request->validated();
 
-        // Create role data
-        $roleData = [
-            'name' => $validated['name'],
-            'slug' => $validated['slug'] ?? strtolower(str_replace(' ', '-', $validated['name'])),
-            'description' => $validated['description'] ?? null,
-            'is_active' => $validated['is_active'] ?? true,
-        ];
+        // Create role using helper to avoid duplication
+        $role = Role::create($this->prepareRoleData($validated));
 
-        $role = Role::create($roleData);
-
-        // Attach permissions if provided (support both 'permissions' and 'permission')
-        $permissionIds = $validated['permissions'] ?? $validated['permission'] ?? [];
-        if (!empty($permissionIds)) {
-            $role->permissions()->attach(array_unique($permissionIds));
-        }
-
-        // Always load permissions for response
-        $role->load('permissions');
+        // Attach permissions (normalized by CheckRolePermissionMiddleware)
+        $role->permissions()->attach(data_get($request, 'permission_ids', []));
 
         return response()->success(
-            new RoleResource($role),
+            new RoleResource($role->load('permissions')),
             'Role created successfully.'
         );
     }
@@ -50,7 +35,7 @@ class RoleController extends Controller
      *
      * List all roles with their permissions.
      */
-    public function read(): JsonResponse
+    public function read()
     {
         $roles = Role::with('permissions')->get();
 
@@ -65,27 +50,16 @@ class RoleController extends Controller
      *
      * Update an existing role with permissions.
      */
-    public function update(RoleUpdateRequest $request, $id): JsonResponse
+    public function update(RoleUpdateRequest $request, $id)
     {
         $role = Role::findOrFail($id);
-
         $validated = $request->validated();
 
-        // Update role data
-        $roleData = [
-            'name' => $validated['name'] ?? $role->name,
-            'slug' => $validated['slug'] ?? ($validated['name'] ? strtolower(str_replace(' ', '-', $validated['name'])) : $role->slug),
-            'description' => $validated['description'] ?? $role->description,
-            'is_active' => $validated['is_active'] ?? $role->is_active,
-        ];
+        // Update role using helper to avoid duplication
+        $role->update($this->prepareRoleData($validated, $role));
 
-        $role->update($roleData);
-
-        // Update permissions if provided (support both 'permissions' and 'permission')
-        $permissionIds = $validated['permissions'] ?? $validated['permission'] ?? null;
-        if ($permissionIds !== null) {
-            $role->permissions()->sync(array_unique($permissionIds));
-        }
+        // Sync permissions (normalized by CheckRolePermissionMiddleware)
+        $role->permissions()->sync(data_get($request, 'permission_ids', $role->permissions->pluck('permission_id')->toArray()));
 
         return response()->success(
             new RoleResource($role->load('permissions')),
@@ -98,7 +72,7 @@ class RoleController extends Controller
      *
      * Get a single role by ID.
      */
-    public function show($id): JsonResponse
+    public function show($id)
     {
         $role = Role::with('permissions')->findOrFail($id);
 
@@ -113,15 +87,28 @@ class RoleController extends Controller
      *
      * Delete an existing role.
      */
-    public function delete($id): JsonResponse
+    public function delete($id)
     {
         $role = Role::findOrFail($id);
-        
         $role->delete();
 
         return response()->success(
             null,
             'Role deleted successfully.'
         );
+    }
+
+    /**
+     * Prepare role data for create/update.
+     * Removes duplication and uses data_get for safety.
+     */
+    private function prepareRoleData(array $validated, $role = null): array
+    {
+        return [
+            'name'        => data_get($validated, 'name', data_get($role, 'name')),
+            'slug'        => data_get($validated, 'slug') ?? (data_get($validated, 'name') ? strtolower(str_replace(' ', '-', data_get($validated, 'name'))) : data_get($role, 'slug')),
+            'description' => data_get($validated, 'description', data_get($role, 'description')),
+            'is_active'   => data_get($validated, 'is_active', data_get($role, 'is_active', true)),
+        ];
     }
 }

@@ -15,13 +15,16 @@ class UserRoleController extends Controller
      */
     public function assign(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $user = User::findOrFail($request->user_id);
-        $user->update(['role_id' => $request->role_id]);
+        $user_id = data_get($validated, 'user_id');
+        $role_id = data_get($validated, 'role_id');
+
+        $user = User::findOrFail($user_id);
+        $user->update(['role_id' => $role_id]);
 
         return response()->success(
             new UserResource($user->load('assignedRole')),
@@ -49,12 +52,14 @@ class UserRoleController extends Controller
      */
     public function update(Request $request, $user_id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'role_id' => 'required|exists:roles,id',
         ]);
 
+        $role_id = data_get($validated, 'role_id');
+
         $user = User::findOrFail($user_id);
-        $user->update(['role_id' => $request->role_id]);
+        $user->update(['role_id' => $role_id]);
 
         return response()->success(
             new UserResource($user->load('assignedRole')),
