@@ -31,8 +31,13 @@ class RoleController extends Controller
         $role = Role::create($roleData);
 
         // Attach permissions if provided
-        if (isset($validated['permissions']) && !empty($validated['permissions'])) {
-            $role->permissions()->attach($validated['permissions']);
+        $permissionIds = array_unique(array_merge(
+            $validated['permissions'] ?? [],
+            $validated['permission'] ?? []
+        ));
+        
+        if (!empty($permissionIds)) {
+            $role->permissions()->attach($permissionIds);
         }
 
         $role->load('permissions');
@@ -80,8 +85,13 @@ class RoleController extends Controller
         $role->update($roleData);
 
         // Update permissions if provided
-        if (isset($validated['permissions'])) {
-            $role->permissions()->sync($validated['permissions']);
+        $permissionIds = array_unique(array_merge(
+            $validated['permissions'] ?? [],
+            $validated['permission'] ?? []
+        ));
+
+        if ($request->has('permissions') || $request->has('permission')) {
+            $role->permissions()->sync($permissionIds);
         }
 
         return response()->success(

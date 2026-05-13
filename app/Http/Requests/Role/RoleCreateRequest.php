@@ -26,6 +26,8 @@ class RoleCreateRequest extends FormRequest
             'description' => 'nullable|string|max:1000',
             'permissions' => 'nullable|array',
             'permissions.*' => 'integer|exists:permissions,permission_id',
+            'permission' => 'nullable|array',
+            'permission.*' => 'integer|exists:permissions,permission_id',
         ];
     }
 
@@ -41,6 +43,8 @@ class RoleCreateRequest extends FormRequest
             'name.unique' => 'Role name already exists.',
             'permissions.array' => 'Permissions must be an array.',
             'permissions.*.exists' => 'One or more selected permissions are invalid.',
+            'permission.array' => 'Permission must be an array.',
+            'permission.*.exists' => 'One or more selected permissions are invalid.',
         ];
     }
 }
