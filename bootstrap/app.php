@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__ . '/../routes/user_role.php',
             __DIR__ . '/../routes/category.php', 
             __DIR__ . '/../routes/asset.php',
+            __DIR__ . '/../routes/assignment.php',
             __DIR__ . '/../routes/file.php',
         ],
 

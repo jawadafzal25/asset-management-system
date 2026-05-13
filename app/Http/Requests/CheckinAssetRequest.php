@@ -14,7 +14,7 @@ class CheckinAssetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'asset_id' => 'required|exists:assets,id',
+            'asset_id' => 'required|integer|exists:assets,id',
         ];
     }
 }

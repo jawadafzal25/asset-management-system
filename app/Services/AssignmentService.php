@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class AssignmentService
 {
-    public function checkout(array $data)
+    public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
            $asset = Asset::where('id', $data['asset_id'])->lockForUpdate()->first();
@@ -26,14 +26,15 @@ class AssignmentService
                 'assigned_by' => auth()->id() ?? 1, 
                 'quantity'    => $data['quantity'] ?? 1,
                 'assign_date' => now(),
-                'status'      => 'Assigned'
+                'status'      => 'Assigned',
+                'description' => $data['description'] ?? null,
             ]);
 
             return $assignment;
         });
     }
 
-    public function checkin(array $data)
+    public function returnAsset(array $data)
     {
         return DB::transaction(function () use ($data) {
            
@@ -41,7 +42,9 @@ class AssignmentService
                 ->whereNull('return_date') 
                 ->first();
 
-           
+            if (!$assignment) {
+                throw new \Exception('No active assignment found for this asset');
+            }
             
             $assignment->return_date = now();
             $assignment->status = 'Returned'; 
@@ -56,18 +59,10 @@ class AssignmentService
         });
     }
 
-    public function getHistory($assetId = null)
+    public function getHistory()
     {
-        if ($assetId) {
-            \App\Models\Asset::findOrFail($assetId); 
-        }
-
-        $query = AssetAssignment::with(['employee', 'asset', 'assigner']); 
-
-        if ($assetId) {
-            $query->where('asset_id', $assetId);
-        }
-
-        return $query->orderBy('assign_date', 'desc')->get();
+        return AssetAssignment::with(['employee', 'asset', 'assigner'])
+            ->orderBy('assign_date', 'desc')
+            ->get();
     }
 }

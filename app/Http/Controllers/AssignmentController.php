@@ -16,12 +16,12 @@ class AssignmentController extends Controller
         $this->assignmentService = $assignmentService;
     }
 
-    public function checkout(CheckoutAssetRequest $request)
+    public function store(CheckoutAssetRequest $request)
     {
         // 1. Request se validated array
         $validatedData = $request->validated();
         
-        $assignment = $this->assignmentService->checkout([
+        $assignment = $this->assignmentService->store([
             'asset_id'    => data_get($validatedData, 'asset_id'),
             'employee_id' => data_get($validatedData, 'employee_id'),
             'quantity'    => data_get($validatedData, 'quantity', 1),
@@ -35,11 +35,11 @@ class AssignmentController extends Controller
         );
     }
 
-    public function checkin(CheckinAssetRequest $request)
+    public function returnAsset(CheckinAssetRequest $request)
     {
         $validatedData = $request->validated();
 
-        $assignment = $this->assignmentService->checkin([
+        $assignment = $this->assignmentService->returnAsset([
             'asset_id' => data_get($validatedData, 'asset_id'),
         ]);
         
@@ -50,9 +50,9 @@ class AssignmentController extends Controller
         );
     }
 
-    public function history($assetId = null) 
+    public function history() 
     {
-        $history = $this->assignmentService->getHistory($assetId);
+        $history = $this->assignmentService->getHistory();
         
         return response()->success(
             AssignmentResource::collection($history), 
