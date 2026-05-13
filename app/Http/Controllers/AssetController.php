@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 /**
  * AssetController
  *
- * Cleaned up and optimized for GridFS integration.
+ * Cleaned up after successful GridFS integration.
  */
 class AssetController extends Controller
 {
