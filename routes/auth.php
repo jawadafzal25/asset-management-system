@@ -61,4 +61,17 @@ Route::prefix('auth')->group(function () {
             'check.validation:update_password_request',
         ]);
 
+    // GET /api/auth/read
+    Route::get('read', [AuthController::class, 'read'])
+        ->middleware([
+            'check.token',
+        ]);
+
+    // POST /api/auth/update
+    Route::post('update', [AuthController::class, 'update'])
+        ->middleware([
+            'check.token',
+            'handle.profile_picture',
+        ]);
+
 });

@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\SignupRequest;
+use App\Http\Requests\Auth\UpdateRequest;
 use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Http\Requests\Auth\VerifySignupRequest;
 use App\Http\Resources\UserResource;
@@ -155,5 +156,33 @@ class AuthController extends Controller
         return response()->success([
             'user' => UserResource::make($user),
         ], 'Password updated successfully!');
+    }
+
+    /**
+     * GET /api/auth/read
+     * Retrieve the authenticated user's details.
+     */
+    public function read(\Illuminate\Http\Request $request)
+    {
+        $users = User::all();
+
+        return response()->success([
+            'users' => UserResource::collection($users),
+        ], 'All users retrieved successfully!');
+    }
+
+    /**
+     * POST /api/auth/update
+     * Update the authenticated user's profile information.
+     */
+    public function update(UpdateRequest $request)
+    {
+        $user = data_get($request, 'user');
+
+        $user->update($request->validated());
+
+        return response()->success([
+            'user' => UserResource::make($user),
+        ], 'Profile updated successfully!');
     }
 }
