@@ -29,6 +29,7 @@ class User extends Authenticatable
         'verification_code',
         'organization_id',
         'role',
+        'role_id',
         'profile_picture',
     ];
 
@@ -112,5 +113,33 @@ class User extends Authenticatable
             'verification_code' => null,
             'role'              => 'admin',
         ]);
+    }
+
+    /**
+     * Role relationship
+     */
+    public function assignedRole()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * Check if user has a specific permission via their role.
+     */
+    public function hasPermission(string $permissionName): bool
+    {
+        if (!$this->role_id || !$this->assignedRole) {
+            return false;
+        }
+
+        return $this->assignedRole->hasPermission($permissionName);
+    }
+
+    /**
+     * Check if user is a main admin (Super Admin).
+     */
+    public function isMainAdmin(): bool
+    {
+        return $this->assignedRole && $this->assignedRole->slug === 'super-admin';
     }
 }
