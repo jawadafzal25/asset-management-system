@@ -101,7 +101,7 @@ return Application::configure(basePath: dirname(__DIR__))
             */
 
             'check.dept' =>
-            \App\Http\Middleware\Department\CheckDepartmentMiddleware::class,
+            \App\Http\Middleware\CheckDepartmentMiddleware::class,
         ]);
     })
 
