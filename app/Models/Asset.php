@@ -81,11 +81,13 @@ class Asset extends Model
      * An asset can have many maintenance requests.
      * Placeholder relationship — MaintenanceRequest model to be implemented separately.
      */
-    public function maintenanceRequests(): HasMany
-    {
-        // MaintenanceRequest model will be created in the Maintenance Module.
-        return $this->hasMany(\App\Models\MaintenanceRequest::class, 'asset_id');
-    }
+    public function maintenances(): HasMany
+{
+    return $this->hasMany(
+        Maintenance::class,
+        'asset_id'
+    );
+}
 
     // -------------------------------------------------------------------------
     // Business Logic Helpers
