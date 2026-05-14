@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Permission\PermissionByModuleRequest;
 use App\Http\Requests\Permission\PermissionIndexRequest;
-use App\Http\Resources\Permission\PermissionResource;
+use App\Http\Resources\PermissionResource;
 use App\Services\PermissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
