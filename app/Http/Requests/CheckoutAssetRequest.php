@@ -15,7 +15,7 @@ class CheckoutAssetRequest extends FormRequest
     {
         return [
             'asset_id' => 'required|exists:assets,id',
-            'employee_id' => 'required|exists:employees,employee_id',
+            'employee_id' => 'required|exists:employees,id',
             'description' => 'required|string|max:1000',
         ];
     }
