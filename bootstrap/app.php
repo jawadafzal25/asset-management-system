@@ -32,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__ . '/../routes/asset.php',
             __DIR__ . '/../routes/assignment.php',
             __DIR__ . '/../routes/file.php',
+            __DIR__ . '/../routes/maintenance.php',
         ],
 
         apiPrefix: 'api',
