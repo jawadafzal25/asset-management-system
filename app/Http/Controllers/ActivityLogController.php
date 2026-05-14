@@ -29,7 +29,6 @@ class ActivityLogController extends Controller
 
         // Filter by module
         if ($request->filled('module')) {
-            $module = data_get($request->validated() ?? $request->all(), 'module', $request->input('module'));
             $query->where('module', $request->input('module'));
         }
 
