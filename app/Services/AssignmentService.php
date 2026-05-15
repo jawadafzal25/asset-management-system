@@ -14,8 +14,8 @@ class AssignmentService
            $asset = Asset::where('id', $data['asset_id'])->lockForUpdate()->first();
 
            
-            $asset->quantity -= $data['quantity'] ?? 1; 
-            if ($asset->quantity == 0) {
+            $asset->remaining_quantity -= $data['quantity'] ?? 1; 
+            if ($asset->remaining_quantity == 0) {
                 $asset->status = 'assigned';
             }
             $asset->save();
@@ -51,7 +51,7 @@ class AssignmentService
             $assignment->save();
 
             $asset = Asset::where('id', $data['asset_id'])->lockForUpdate()->first();
-            $asset->quantity += $assignment->quantity;
+            $asset->remaining_quantity += $assignment->quantity;
             $asset->status = 'available';
             $asset->save();
 

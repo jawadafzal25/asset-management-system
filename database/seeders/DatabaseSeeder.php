@@ -11,10 +11,13 @@ class DatabaseSeeder extends Seeder
         // Step 1: Seed all permissions first (your module)
         $this->call(PermissionSeeder::class);
 
-        // Step 2: Your teammate seeds roles using the permissions above
+        // Step 2: Seed test data
+        $this->call(TestDataSeeder::class);
+
+        // Step 3: Your teammate seeds roles using the permissions above
         // $this->call(RoleSeeder::class);
 
-        // Step 3: Main admin seeder
+        // Step 4: Main admin seeder
         // $this->call(SuperAdminSeeder::class);
     }
 }
