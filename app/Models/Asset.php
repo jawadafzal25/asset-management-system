@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use App\Traits\OrganizationScoped;
+
 class Asset extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, OrganizationScoped;
 
     /**
      * Allowed status values for an asset.
@@ -33,6 +35,7 @@ class Asset extends Model
         'status',
         'asset_image',
         'invoice_image',
+        'organization_id',
     ];
 
     /**

@@ -5,8 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use App\Traits\OrganizationScoped;
+
 class Employee extends Model
 {
+    use OrganizationScoped;
 
     protected $primaryKey = 'employee_id';
     protected $fillable = [
@@ -19,7 +22,8 @@ class Employee extends Model
         'joining_date',
         'salary',
         'status',
-        'department_id'
+        'department_id',
+        'organization_id'
     ];
 
 

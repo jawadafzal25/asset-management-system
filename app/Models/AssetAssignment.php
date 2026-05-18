@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use App\Traits\OrganizationScoped;
+
 class AssetAssignment extends Model
 {
-    use HasFactory;
+    use HasFactory, OrganizationScoped;
 
     protected $primaryKey = 'assignment_id';
 
@@ -19,7 +21,8 @@ class AssetAssignment extends Model
         'quantity',
         'assign_date',
         'return_date',
-        'status'
+        'status',
+        'organization_id'
     ];
 
     /**

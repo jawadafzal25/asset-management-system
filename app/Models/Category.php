@@ -4,14 +4,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Traits\OrganizationScoped;
+
 class Category extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, OrganizationScoped;
 
     protected $fillable = [
         'name',
         'description',
-        'status'
+        'status',
+        'organization_id'
     ];
 
     protected $casts = [
