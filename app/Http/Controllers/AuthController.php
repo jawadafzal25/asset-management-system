@@ -84,6 +84,9 @@ class AuthController extends Controller
     {
         $user = data_get($request, 'user');
 
+        // Expire/Revoke all previous active access tokens for this user
+        SessionToken::where('user_id', $user->id)->where('type', 'access_token')->delete();
+
         $token = SessionToken::generate('access_token', $user);
 
         return response()->success([
