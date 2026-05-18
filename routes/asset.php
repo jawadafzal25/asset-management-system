@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 |------------------------------------------------------------------
 | Routes are now available at /api/assets (v1 prefix removed).
 */
-Route::prefix('assets')->group(function () {
+Route::prefix('assets')->middleware('check.token')->group(function () {
 
     // Create Asset
     Route::post('/', [AssetController::class, 'create']);
