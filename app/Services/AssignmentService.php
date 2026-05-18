@@ -11,11 +11,16 @@ class AssignmentService
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-           $asset = Asset::where('id', $data['asset_id'])->lockForUpdate()->first();
+            $asset = Asset::where('id', $data['asset_id'])->lockForUpdate()->first();
 
-           
-            $asset->quantity -= $data['quantity'] ?? 1; 
-            if ($asset->quantity == 0) {
+            $qtyToAssign = $data['quantity'] ?? 1;
+
+            if ($asset->remaining_quantity < $qtyToAssign) {
+                throw new \Exception('Insufficient remaining quantity of this asset to assign.');
+            }
+
+            $asset->remaining_quantity -= $qtyToAssign; 
+            if ($asset->remaining_quantity == 0) {
                 $asset->status = 'assigned';
             }
             $asset->save();
@@ -51,7 +56,7 @@ class AssignmentService
             $assignment->save();
 
             $asset = Asset::where('id', $data['asset_id'])->lockForUpdate()->first();
-            $asset->quantity += $assignment->quantity;
+            $asset->remaining_quantity += $assignment->quantity;
             $asset->status = 'available';
             $asset->save();
 

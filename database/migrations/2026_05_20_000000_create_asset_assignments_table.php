@@ -14,7 +14,7 @@ return new class extends Migration
 
             // Foreign Keys (bigint)
             $table->foreignId('asset_id')->constrained('assets')->onDelete('cascade');
-            $table->foreignId('employee_id')->constrained('employees', 'id')->onDelete('cascade');
+            $table->foreignId('employee_id')->constrained('employees', 'employee_id')->onDelete('cascade');
             
             $table->foreignId('assigned_by')->constrained('users')->onDelete('cascade');
 

@@ -33,7 +33,7 @@ class AssetAssignment extends Model
 
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'employee_id', 'id');
+        return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
 
     public function assigner(): BelongsTo
