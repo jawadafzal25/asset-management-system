@@ -19,7 +19,11 @@ class CheckAssetExists
     {
         $id = $request->route('id');
 
-        $asset = Asset::select(['id', 'asset_name', 'asset_code', 'category_id', 'department_id', 'brand', 'purchase_date', 'total_quantity', 'remaining_quantity', 'status', 'created_at'])
+        $asset = Asset::select([
+            'id', 'asset_name', 'asset_code', 'category_id', 'department_id',
+            'brand', 'purchase_date', 'total_quantity', 'remaining_quantity',
+            'status', 'asset_image', 'invoice_image', 'created_at', 'updated_at'
+        ])
             ->with(['category:id,name', 'department:department_id,department_name'])
             ->find($id);
 

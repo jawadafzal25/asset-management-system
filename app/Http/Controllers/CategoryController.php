@@ -59,14 +59,12 @@ class CategoryController extends Controller
     ) {
         $validated = $request->validated();
 
-        $data = $this->service->update(
-            $id,
-            [
-                'name' => data_get($validated, 'name'),
-                'description' => data_get($validated, 'description'),
-                'status' => data_get($validated, 'status'),
-            ]
+        $payload = array_intersect_key(
+            $validated,
+            array_flip(['name', 'description', 'status'])
         );
+
+        $data = $this->service->update($id, $payload);
 
         return response()->success(
             new CategoryResource($data),

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Asset;
 
 use App\Models\Asset;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateAssetRequest extends FormRequest
 {
@@ -23,11 +24,29 @@ class UpdateAssetRequest extends FormRequest
         /** @var Asset $asset */
         $asset = $this->attributes->get('asset');
 
+        $organizationId = optional($this->user())->organization_id;
+
         return [
             'asset_name'     => ['sometimes', 'string', 'max:150'],
             'asset_code'     => ['sometimes', 'string', 'max:50', 'unique:assets,asset_code,' . ($asset?->id ?? 'NULL')],
-            'category_id'    => ['sometimes', 'integer', 'exists:categories,id'],
-            'department_id'  => ['sometimes', 'integer', 'exists:departments,department_id'],
+            'category_id'    => [
+                'sometimes',
+                'integer',
+                Rule::exists('categories', 'id')->where(function ($query) use ($organizationId) {
+                    if ($organizationId !== null) {
+                        $query->where('organization_id', $organizationId);
+                    }
+                }),
+            ],
+            'department_id'  => [
+                'sometimes',
+                'integer',
+                Rule::exists('departments', 'department_id')->where(function ($query) use ($organizationId) {
+                    if ($organizationId !== null) {
+                        $query->where('organization_id', $organizationId);
+                    }
+                }),
+            ],
             'brand'          => ['nullable', 'string', 'max:100'],
             'purchase_date'  => ['nullable', 'date', 'before_or_equal:today'],
             'total_quantity' => [

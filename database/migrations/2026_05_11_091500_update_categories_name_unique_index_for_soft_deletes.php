@@ -9,13 +9,27 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (!Schema::hasTable('categories')) {
+            return;
+        }
+
         Schema::table('categories', function (Blueprint $table) {
-            $table->dropUnique('categories_name_unique');
+            if (DB::getSchemaBuilder()->getIndexes('categories')) {
+                try {
+                    $table->dropUnique('categories_name_unique');
+                } catch (\Exception $e) {
+                    // Index doesn't exist, skip
+                }
+            }
         });
 
-        DB::statement(
-            'CREATE UNIQUE INDEX categories_name_active_unique ON categories (name) WHERE deleted_at IS NULL'
-        );
+        try {
+            DB::statement(
+                'CREATE UNIQUE INDEX categories_name_active_unique ON categories (name) WHERE deleted_at IS NULL'
+            );
+        } catch (\Exception $e) {
+            // Index already exists, skip
+        }
     }
 
     public function down(): void
