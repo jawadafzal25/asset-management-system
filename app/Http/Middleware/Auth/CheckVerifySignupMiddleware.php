@@ -11,21 +11,32 @@ class CheckVerifySignupMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        $token = $request->input('verification_code');
+        $signupToken = $request->input('signup_token');
+        $verificationCode = $request->input('verification_code');
 
-        if (!$token) {
-            return response()->error('Verification code is required.', 422);
+        if (!$signupToken || !$verificationCode) {
+            return response()->error('Both signup_token and verification_code are required.', 422);
         }
 
-        // Find valid signup verification token
-        $tokenRecord = SessionToken::findValidToken($token, 'signup_verification_token');
-
-        if (!$tokenRecord) {
-            return response()->error('Invalid or expired verification token.', 422);
+        // Find valid signup token
+        $signupTokenRecord = SessionToken::findValidToken($signupToken, 'signup_token');
+        if (!$signupTokenRecord) {
+            return response()->error('Invalid or expired signup token.', 422);
         }
 
-        // Find the user through the token record
-        $user = User::find($tokenRecord->user_id);
+        // Find valid verification token
+        $verificationTokenRecord = SessionToken::findValidToken($verificationCode, 'verification_token');
+        if (!$verificationTokenRecord) {
+            return response()->error('Invalid or expired verification code.', 422);
+        }
+
+        // Both tokens must belong to the same user
+        if ($signupTokenRecord->user_id !== $verificationTokenRecord->user_id) {
+            return response()->error('Tokens do not match the same user account.', 422);
+        }
+
+        // Find the user through the token records
+        $user = User::find($signupTokenRecord->user_id);
 
         if (!$user) {
             return response()->error('User account not found.', 404);
@@ -37,7 +48,8 @@ class CheckVerifySignupMiddleware
 
         $request->merge([
             'verified_user' => $user,
-            'token_record'  => $tokenRecord,
+            'signup_token_record' => $signupTokenRecord,
+            'verification_token_record' => $verificationTokenRecord,
         ]);
 
         return $next($request);

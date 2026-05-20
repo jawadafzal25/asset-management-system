@@ -22,7 +22,8 @@ class VerifySignupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'verification_code' => 'required|string',
+            'signup_token' => 'required|string',
+            'verification_code' => 'required|string|digits:6',
         ];
     }
 }

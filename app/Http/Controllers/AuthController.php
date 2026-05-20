@@ -23,6 +23,9 @@ class AuthController extends Controller
     /**
      * POST /api/auth/signup
      * Register a new user and send email verification.
+     * 
+     * Returns both a signup_token (for client-side verification) and 
+     * sends a verification_token (6-digit OTP) via email.
      */
     public function signup(SignupRequest $request)
     {
@@ -45,31 +48,38 @@ class AuthController extends Controller
         // Update organization created_by field with actual user ID
         $organization->update(['created_by' => $user->id]);
 
-        // Generate verification token
-        $token = SessionToken::generate('signup_verification_token', $user);
+        // Generate signup token (long token returned to client, valid for 24 hours)
+        $signupToken = SessionToken::generate('signup_token', $user);
 
-        $user->notify(new SignupVerificationNotification($user, $token));
+        // Generate verification token (6-digit OTP sent via email, valid for 10 minutes)
+        $verificationToken = SessionToken::generate('verification_token', $user);
+
+        $user->notify(new SignupVerificationNotification($user, $verificationToken));
 
         return response()->success([
             'user' => UserResource::make($user),
             'organization' => OrganizationResource::make($organization),
-        ], 'Signup successful! Please check your email for a verification link.');
+            'signup_token' => $signupToken,
+        ], 'Signup successful! Please check your email for a verification code.');
     }
 
     /**
      * POST /api/auth/verify-signup
-     * Verify the user's email using the token sent via email.
+     * Verify the user's email using both signup token and verification code.
+     * Requires both tokens for security.
      */
     public function verifySignup(VerifySignupRequest $request)
     {
-        $user        = data_get($request, 'verified_user');
-        $tokenRecord = data_get($request, 'token_record');
+        $user = data_get($request, 'verified_user');
+        $signupTokenRecord = data_get($request, 'signup_token_record');
+        $verificationTokenRecord = data_get($request, 'verification_token_record');
 
         // Activate user
         $user->update(['is_active' => true]);
 
-        // Delete verification token
-        $tokenRecord->delete();
+        // Delete both tokens
+        $signupTokenRecord->delete();
+        $verificationTokenRecord->delete();
 
         return response()->success([
             'user' => UserResource::make($user),

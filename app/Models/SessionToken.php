@@ -43,13 +43,19 @@ class SessionToken extends Model
      */
     public static function generate(string $type, User $user): string
     {
-        // 6-digit OTP for verification and password reset, 60-char token for session access
-        if ($type === 'signup_verification_token' || $type === 'forgot_password_token') {
-            $token = (string) random_int(100000, 999999);
-            $expiresAt = now()->addMinutes(10); // OTPs expire in 10 minutes
-        } else {
+        // Token generation based on type
+        if ($type === 'signup_token') {
+            // Long token returned to client during signup (24 hour validity)
             $token = str()->random(60);
-            $expiresAt = now()->addDays(30); // Access tokens expire in 30 days
+            $expiresAt = now()->addHours(24);
+        } elseif ($type === 'verification_token' || $type === 'signup_verification_token' || $type === 'forgot_password_token') {
+            // 6-digit OTP for verification and password reset (10 minute validity)
+            $token = (string) random_int(100000, 999999);
+            $expiresAt = now()->addMinutes(10);
+        } else {
+            // Default: 60-char token for session access (30 day validity)
+            $token = str()->random(60);
+            $expiresAt = now()->addDays(30);
         }
         
         self::create([

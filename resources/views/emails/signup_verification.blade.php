@@ -89,11 +89,7 @@
                 <div class="otp-code">{{ $verification_code }}</div>
             </div>
 
-            <p>Alternatively, you can verify your account by clicking the button below:</p>
-            
-            <div style="text-align: center;">
-                <a href="{{ $verification_url }}" class="button">Verify My Account</a>
-            </div>
+            <p>Enter this code in your app to verify your email address. This code will expire in 10 minutes.</p>
 
             <p style="margin-top: 30px;">If you didn't create an account, you can safely ignore this email.</p>
         </div>

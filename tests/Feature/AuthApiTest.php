@@ -31,32 +31,40 @@ class AuthApiTest extends TestCase
                      'data' => [
                          'user' => ['id', 'name', 'email', 'organization_id'],
                          'organization' => ['id', 'name', 'created_at'],
+                         'signup_token' => [],
                      ]
                  ]);
 
         $this->assertDatabaseHas('users', ['email' => 'john@example.com', 'is_active' => false]);
         $this->assertDatabaseHas('organizations', ['name' => 'Acme Corp']);
         
-        // Ensure a verification token was generated
+        // Ensure both token types were generated
         $user = User::where('email', 'john@example.com')->first();
         $this->assertDatabaseHas('session_tokens', [
-            'type' => 'signup_verification_token',
+            'type' => 'signup_token',
+            'user_id' => $user->id,
+        ]);
+        $this->assertDatabaseHas('session_tokens', [
+            'type' => 'verification_token',
             'user_id' => $user->id,
         ]);
     }
 
     /** @test */
-    public function it_verifies_signup_using_verification_code(): void
+    public function it_verifies_signup_with_both_tokens(): void
     {
         $user = User::factory()->create([
             'email' => 'jane@example.com',
             'is_active' => false,
         ]);
 
-        $otp = SessionToken::generate('signup_verification_token', $user);
+        // Generate both tokens
+        $signupToken = SessionToken::generate('signup_token', $user);
+        $verificationCode = SessionToken::generate('verification_token', $user);
 
         $response = $this->postJson('/api/auth/verify-signup', [
-            'verification_code' => $otp,
+            'signup_token' => $signupToken,
+            'verification_code' => $verificationCode,
         ]);
 
         $response->assertOk()
@@ -65,10 +73,14 @@ class AuthApiTest extends TestCase
 
         $this->assertTrue($user->fresh()->is_active);
 
-        // Verification token should be deleted
+        // Both tokens should be deleted
         $this->assertDatabaseMissing('session_tokens', [
-            'token' => $otp,
-            'type' => 'signup_verification_token',
+            'token' => $signupToken,
+            'type' => 'signup_token',
+        ]);
+        $this->assertDatabaseMissing('session_tokens', [
+            'token' => $verificationCode,
+            'type' => 'verification_token',
         ]);
     }
 
